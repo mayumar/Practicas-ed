@@ -21,6 +21,9 @@ Response PacketProcessor::process(const Packet &packet)
     //TODO
     //First: deque all processed packets at packet time arrival.
 
+    while ( !(_finish_time.is_empty()) && _finish_time.front() <= packet.arrival_time){
+        _finish_time.deque();
+    }
 
     //
     //Second: Is there any place for this packet in the queue?
@@ -31,6 +34,19 @@ Response PacketProcessor::process(const Packet &packet)
     //Remember that the queue saves the finish processing time for the packets.
     //Remember to update the returned response.
         
+        if (_finish_time.is_empty()){
+
+            _finish_time.enque(packet.arrival_time + packet.process_time);
+            ret.dropped = false;
+            ret.start_time = packet.arrival_time;
+
+        } else {
+
+            ret.dropped = false;
+            ret.start_time = _finish_time.back();
+            _finish_time.enque(_finish_time.back() + packet.process_time);
+
+        }
         
     //
     }
