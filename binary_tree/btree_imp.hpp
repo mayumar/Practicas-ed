@@ -148,8 +148,17 @@ template<class T>
           std::istringstream iss(token);
           iss >> new_t;
           if(iss){
-
+              tree->create_root(new_t);
+              tree->set_left(BTree<T>::create(in));
+              tree->set_right(BTree<T>::create(in));
+              in >> token;
           }
+
+          if(token != "]"){
+              throw std::runtime_error("Wrong input format.");
+          }
+      }else if(token != "[]"){
+          throw std::runtime_error("Wrong input format.");
       }
 
       //
