@@ -22,6 +22,26 @@ int compute_height (typename BTree<T>::Ref t)
     assert(t != nullptr);
     int height = 0;
     //TODO
+    int maxH, aux;
+    height = -1;
+
+    if(!t->is_empty()){
+        maxH = -1;
+
+        aux = compute_height<T>(t->left());
+
+        if(aux > maxH)
+            maxH = aux;
+
+
+        aux = compute_height<T>(t->right());
+
+        if(aux > maxH)
+            maxH = aux;
+
+        height = 1 + maxH;
+
+    }
 
     //
     return height;
@@ -35,6 +55,18 @@ size_t compute_size (typename BTree<T>::Ref t)
     //TODO
     //Hint: when you call a template into other template maybe you need
     // to specialize the call.
+
+    int size = 0;
+
+    if(!t->is_empty()){
+        size = 1;
+
+        size += compute_size<T>(t->left());
+        size += compute_size<T>(t->right());
+
+    }
+
+    ret_val = size;
 
     //
     return ret_val;
@@ -50,6 +82,17 @@ prefix_process(typename BTree<T>::Ref tree, Processor& p)
     //Hint: when you call a template into other template maybe you need
     // to specialize the call.
 
+    if(!tree->is_empty()){
+        retVal = p(tree->item());
+
+        if(!retVal || !prefix_process<T>(tree->left(), p))
+            retVal = false;
+
+        if(!retVal || !prefix_process<T>(tree->right(), p))
+            retVal = false;
+    }
+
+
     //
     return retVal;
 }
@@ -63,6 +106,18 @@ infix_process(typename BTree<T>::Ref tree, Processor& p)
     //TODO
     //Hint: when you call a template into other template maybe you need
     // to specialize the call.
+
+    if(!tree->is_empty()){
+        retVal = infix_process<T>(tree->left(), p);
+
+        if(!retVal || !p(tree->item()))
+            retVal = false;
+
+        if(!retVal || !infix_process<T>(tree->right(), p)){
+            retVal = false;
+        }
+
+    }
 
     //
     return retVal;
@@ -78,6 +133,17 @@ postfix_process(typename BTree<T>::Ref tree, Processor& p)
     //Hint: when you call a template into other template maybe you need
     // to specialize the call.
 
+    if(!tree->is_empty()){
+        retVal = postfix_process<T>(tree->left(), p);
+
+        if(!retVal || !postfix_process<T>(tree->right(), p))
+            retVal = false;
+
+        if(!retVal || !p(tree->item()))
+            retVal= false;
+
+    }
+
     //
     return retVal;
 }
@@ -92,6 +158,22 @@ breadth_first_process(typename BTree<T>::Ref tree, Processor& p)
     //TODO
     //Hint: think about which data structure can help you to do this kind 
     //  of traversal.
+    std::queue<typename BTree<T>::Ref> q;
+    typename BTree<T>::Ref subtree;
+
+    q.push(tree);
+
+    while(!q.empty() && go_on){
+        subtree = q.front();
+        q.pop();
+
+        if(!subtree->is_empty()){
+            go_on = p(subtree -> item());
+            q.push(subtree->left());
+            q.push(subtree->right());
+        }
+
+    }
 
     //
     return go_on;
@@ -105,7 +187,8 @@ print_prefix(std::ostream& out, typename BTree<T>::Ref tree)
     //You must create a lambda function with a parameter to be printed and
     //  use a prefix_process to process the tree with this lambda.
     //Remember: the lambda must return true.
-
+    auto processor = [&out] (T item) {out << item << " "; return true;};
+    prefix_process<T>(tree, processor);
     //
     return out;
 }
@@ -118,7 +201,8 @@ print_infix(std::ostream& out, typename BTree<T>::Ref tree)
     //You must create a lambda function with a parameter to be printed and
     //  use an infix_process to process the tree with this lambda.
     //Remember: the lambda must return true.
-
+    auto processor = [&out] (T item) {out << item << " "; return true;};
+    infix_process<T>(tree, processor);
     //
     return out;
 }
@@ -131,7 +215,8 @@ print_postfix(std::ostream& out, typename BTree<T>::Ref tree)
     //You must create a lambda function with a parameter to be printed and
     //  use a postfix_process to process the tree with this lambda.
     //Remember: the lambda must return true.
-
+    auto processor = [&out] (T item) {out << item << " "; return true;};
+    postfix_process<T>(tree, processor);
     //
     return out;
 }
@@ -144,7 +229,8 @@ print_breadth_first(std::ostream& out, typename BTree<T>::Ref tree)
     //You must create a lambda function with a parameter to be printed and
     //  use a breadth_first_process to process the tree with this lambda.
     //Remember: the lambda must return true.
-
+    auto processor = [&out] (T item) {out << item << " "; return true;};
+    breadth_first_process<T>(tree, processor);
     //
     return out;
 }
