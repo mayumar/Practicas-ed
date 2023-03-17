@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 9.0.1, 2023-03-15T21:02:42. -->
+<!-- Written by QtCreator 9.0.1, 2023-03-17T10:48:38. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -375,13 +375,13 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">test_btree</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.test_btree</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">test_btree</value>
-    <value type="QString" key="RunConfiguration.Arguments">10</value>
+    <value type="QString" key="RunConfiguration.Arguments">30</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory">/home/mayumar/Escritorio/practicased/binary_tree/tests_traversals</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory">/home/mayumar/Escritorio/practicased/binary_tree/tests_inorder</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/mayumar/Escritorio/practicased/build-binary_tree-Desktop-Debug</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
