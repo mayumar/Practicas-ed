@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cassert>
+#include <limits>
 
 #include "rbtree.hpp"
 
@@ -28,6 +29,11 @@ RBTNode<T>::RBTNode(T const &it,
 {
     // TODO
     
+    item_ = it;
+    color_ = c;
+    parent_ = p;
+    left_ = l;
+    right_ = r;
     
     //
     assert(item() == it);
@@ -63,8 +69,8 @@ T RBTNode<T>::item() const
 {
     T value;
     // TODO
- 
-     //
+    value = item_;
+    //
     return value;
 }
 
@@ -73,7 +79,7 @@ typename RBTNode<T>::Ref RBTNode<T>::parent() const
 {
     RBTNode<T>::Ref node;
     // TODO
-
+    node = parent_;
     //
     return node;
 }
@@ -83,7 +89,7 @@ typename RBTNode<T>::Ref RBTNode<T>::left() const
 {
     RBTNode<T>::Ref node;
     // TODO
-
+    node = left_;
     //
     return node;
 }
@@ -93,7 +99,7 @@ typename RBTNode<T>::Ref RBTNode<T>::right() const
 {
     RBTNode<T>::Ref node;
     // TODO
-
+    node = right_;
     //
     return node;
 }
@@ -104,7 +110,11 @@ typename RBTNode<T>::Ref RBTNode<T>::child(int idx) const
     assert(idx == 0 || idx == 1);
     RBTNode<T>::Ref node;
     // TODO
-
+    if(idx == 0){
+        node = left_;
+    }else{
+        node = right_;
+    }
     //
     assert(idx == 0 || node == right());
     assert(idx == 1 || node == left());
@@ -116,7 +126,7 @@ typename RBTNode<T>::Color RBTNode<T>::color() const
 {
     RBTNode<T>::Color color = BLACK;
     // TODO
-
+    color = color_;
     //
     return color;
 }
@@ -137,7 +147,7 @@ template <class T>
 void RBTNode<T>::set_item(const T &new_it)
 {
     // TODO
-
+    item_ = new_it;
     //
     assert(item() == new_it);
 }
@@ -146,7 +156,7 @@ template <class T>
 void RBTNode<T>::set_color(RBTNode<T>::Color new_color)
 {
     // TODO
-
+    color_ = new_color;
     //
     assert(color() == new_color);
 }
@@ -155,7 +165,7 @@ template <class T>
 void RBTNode<T>::set_parent(RBTNode<T>::Ref new_parent)
 {
     // TODO
-
+    parent_ = new_parent;
     //
     assert(parent() == new_parent);
 }
@@ -165,7 +175,8 @@ void RBTNode<T>::set_left(Ref new_child)
 {
     // TODO
     // Remember to update the parent link of new_child too.
-
+    left_ = new_child;
+    new_child->parent_ = this_;
     //
     assert(left() == new_child);
     assert(!new_child || new_child->parent() == This());
@@ -176,7 +187,8 @@ void RBTNode<T>::set_right(RBTNode<T>::Ref new_child)
 {
     // TODO
     // Remember to update the parent link of new_child too.
-
+    right_ = new_child;
+    new_child->parent_ = this_;
     //
     assert(right() == new_child);
     assert(!new_child || new_child->parent() == This());
@@ -188,7 +200,13 @@ void RBTNode<T>::set_child(int idx, RBTNode<T>::Ref new_child)
     assert(idx == 0 || idx == 1);
     // TODO
     // Remember to update the parent link of new_child too.
+    if(idx == 0){
+        left_ = new_child;
+    }else{
+        right_ = new_child;
+    }
 
+    new_child->parent_ = this_;
     //
     assert(idx == 0 || new_child == right());
     assert(idx == 1 || new_child == left());
@@ -203,7 +221,9 @@ template <class T>
 RBTree<T>::RBTree()
 {
     // TODO
-
+    root_ = nullptr;
+    current_ = nullptr;
+    parent_ = nullptr;
     //
     assert(is_a_binary_search_tree());
     assert(is_a_rbtree());
@@ -214,7 +234,9 @@ template <class T>
 RBTree<T>::RBTree(T const &item)
 {
     // TODO
-
+    root_ = RBTNode<T>::create(item);
+    current_ = root_;
+    parent_ = nullptr;
     //
     assert(is_a_binary_search_tree());
     assert(is_a_rbtree());
@@ -256,7 +278,32 @@ typename RBTree<T>::Ref RBTree<T>::create(std::istream &in) noexcept(false)
     std::string token;
     // TODO
     // Hint: use the recursive definition of a tree to unfold.
+    T new_t;
+    in >> token;
 
+    if(token == "["){
+        in >> token;
+        std::istringstream iss(token);
+        iss >> new_t;
+        in >> token;
+        if(iss){
+            tree->create_root(new_t);
+            if(token == "R"){
+                tree->root_->set_color(RBTNode<T>::RED);
+            }else if(token == "B"){
+                tree->root_->set_color(RBTNode<T>::BLACK);
+            }
+            tree->set_left(create(in));
+            tree->set_right(create(in));
+            in >> token;
+        }
+
+        if(token != "]"){
+            throw std::runtime_error("Wrong input format.");
+        }
+    }else if(token != "[]"){
+        throw std::runtime_error("Wrong input format.");
+    }
     //
     tree->this_ = tree;
     if (!tree->is_a_binary_search_tree())
@@ -324,7 +371,8 @@ bool RBTree<T>::is_empty() const
 {
     bool empty = false;
     // TODO
-
+    if(root_ == nullptr)
+        empty = true;
     //
     return empty;
 }
@@ -335,7 +383,7 @@ T RBTree<T>::item() const
     assert(!is_empty());
     T value;
     // TODO
-
+    value = root_->item();
     //
     return value;
 }
@@ -346,6 +394,23 @@ std::ostream &RBTree<T>::fold(std::ostream &out) const
     // TODO
     // Hint: use the recursive definition of a tree to fold it.
 
+    if(is_empty()){
+        out << "[]";
+    } else {
+        out << "[ ";
+        out << item();
+        out << " ";
+        if(root_->color() == RBTNode<T>::RED){
+            out << "R";
+        }else{
+            out << "B";
+        }
+        out << " ";
+        left()->fold(out);
+        out << " ";
+        right()->fold(out);
+        out << " ]";
+    }
 
     //
     return out;
@@ -356,7 +421,9 @@ bool RBTree<T>::current_exists() const
 {
     bool exists = false;
     // TODO
-
+    if(current_ != nullptr){
+        exists = true;
+    }
     //
     return exists;
 }
@@ -367,7 +434,7 @@ T RBTree<T>::current() const
     assert(current_exists());
     T value;
     // TODO
-
+    value = current_->item();
     //
     return value;
 }
@@ -391,7 +458,7 @@ typename RBTree<T>::Ref RBTree<T>::left() const
     typename RBTree<T>::Ref subtree = nullptr;
     // TODO
     // Hint: use the protected method to create a tree given the root node.
-
+    subtree = create(root_->left());
     //
     return subtree;
 }
@@ -403,7 +470,7 @@ typename RBTree<T>::Ref RBTree<T>::right() const
     typename RBTree<T>::Ref subtree = nullptr;
     // TODO
     // Hint: use the protected method to create a tree given the root node.
-
+    subtree = create(root_->right());
     //
     return subtree;
 }
@@ -415,6 +482,13 @@ size_t compute_size(typename RBTree<T>::Ref const &tree)
     int s = 0;
     // TODO
     // Hint: use the recursive implementation.
+    if(!tree->is_empty()){
+        s = 1;
+
+        s += compute_size<T>(tree->left());
+        s += compute_size<T>(tree->right());
+
+    }
 
     //
     return s;
@@ -427,7 +501,25 @@ int compute_height(typename RBTree<T>::Ref const &tree)
     int h = -1;
     // TODO
     // Hint: use the recursive implementation.
+    int maxH, aux;
 
+    if(!tree->is_empty()){
+        maxH = -1;
+
+        aux = compute_height<T>(tree->left());
+
+        if(aux > maxH)
+            maxH = aux;
+
+
+        aux = compute_height<T>(tree->right());
+
+        if(aux > maxH)
+            maxH = aux;
+
+        h = 1 + maxH;
+
+    }
     //
     return h;
 }
@@ -448,6 +540,14 @@ bool RBTree<T>::has(const T &k) const
     // Hint: you can reuse the search method for this but in this case you will
     //       need to use "const_cast" to remove constness of "this" and
     //       save/restore the old state of current before returning.
+
+    if(!is_empty()){
+        if(k < item()){
+            found = left()->has(k);
+        }else if(k > item()){
+            found = right()->has(k);
+        }
+    }
 
     //
 #ifndef NDEBUG
@@ -471,7 +571,17 @@ bool infix_process(typename RBTNode<T>::Ref node, Processor &p)
     bool retVal = true;
     // TODO
     // Remember: if node is nullptr return true.
+    if(node != nullptr){
+        retVal = infix_process<T>(node->left(), p);
 
+        if(!retVal || !p(node->item()))
+            retVal = false;
+
+        if(!retVal || !infix_process<T>(node->right(), p)){
+            retVal = false;
+        }
+
+    }
     //
     return retVal;
 }
@@ -556,6 +666,21 @@ bool RBTree<T>::search(T const &k)
 {
     bool found = false;
     // TODO
+
+    current_ = root_;
+    parent_ = nullptr;
+    while(current_ != nullptr && !found){
+        if(current_->item() == k){
+            found = true;
+        }else{
+            parent_ = current_;
+            if(current_->item() > k){
+                current_ = current_->left();
+            }else{
+                current_ = current_->right();
+            }
+        }
+    }
 
     //
     assert(!found || current() == k);

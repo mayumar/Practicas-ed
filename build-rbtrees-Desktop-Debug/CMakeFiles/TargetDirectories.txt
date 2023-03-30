@@ -1,0 +1,4 @@
+/home/mayumar/Escritorio/practicased/build-rbtrees-Desktop-Debug/CMakeFiles/test_bstree.dir
+/home/mayumar/Escritorio/practicased/build-rbtrees-Desktop-Debug/CMakeFiles/test_rbtree.dir
+/home/mayumar/Escritorio/practicased/build-rbtrees-Desktop-Debug/CMakeFiles/edit_cache.dir
+/home/mayumar/Escritorio/practicased/build-rbtrees-Desktop-Debug/CMakeFiles/rebuild_cache.dir
