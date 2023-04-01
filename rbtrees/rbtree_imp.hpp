@@ -176,7 +176,9 @@ void RBTNode<T>::set_left(Ref new_child)
     // TODO
     // Remember to update the parent link of new_child too.
     left_ = new_child;
-    new_child->parent_ = this_;
+    if(new_child){
+        new_child->parent_ = this_;
+    }
     //
     assert(left() == new_child);
     assert(!new_child || new_child->parent() == This());
@@ -188,7 +190,9 @@ void RBTNode<T>::set_right(RBTNode<T>::Ref new_child)
     // TODO
     // Remember to update the parent link of new_child too.
     right_ = new_child;
-    new_child->parent_ = this_;
+    if(new_child){
+        new_child->parent_ = this_;
+    }
     //
     assert(right() == new_child);
     assert(!new_child || new_child->parent() == This());
@@ -446,7 +450,11 @@ int RBTree<T>::current_level() const
     int level = 0;
     // TODO
     // Hint: follow the chain of parents' links.
-
+    auto aux = current_;
+    while(aux != root_){
+        level++;
+        aux = aux->parent();
+    }
     //
     return level;
 }
@@ -534,18 +542,25 @@ bool RBTree<T>::has(const T &k) const
         old_current = current();
 #endif
 
-    bool found = true;
+    bool found = false;
 
     // TODO
     // Hint: you can reuse the search method for this but in this case you will
     //       need to use "const_cast" to remove constness of "this" and
     //       save/restore the old state of current before returning.
 
-    if(!is_empty()){
-        if(k < item()){
-            found = left()->has(k);
-        }else if(k > item()){
-            found = right()->has(k);
+    current_ = root_;
+    parent_ = nullptr;
+    while(current_ != nullptr && !found){
+        if(current_->item() == k){
+            found = true;
+        }else{
+            parent_ = current_;
+            if(current_->item() > k){
+                current_ = current_->left();
+            }else{
+                current_ = current_->right();
+            }
         }
     }
 
@@ -653,7 +668,7 @@ void RBTree<T>::create_root(T const &v)
 {
     assert(is_empty());
     // TODO
-
+    root_ = RBTNode<T>::create(v);
     //
     assert(is_a_binary_search_tree());
     assert(is_a_rbtree());
@@ -700,6 +715,19 @@ void RBTree<T>::insert(T const &k)
         // TODO
         // Remember: a new node is always RED.
 
+        if(is_empty()){
+            create_root(k);
+            current_ = root_;
+        }else{
+            auto aux = RBTNode<T>::create(k);
+            current_ = aux;
+
+            if(k < parent_->item()){
+                parent_->set_left(aux);
+            }else{
+                parent_->set_right(aux);
+            }
+        }
 
         //
 
@@ -745,14 +773,28 @@ void RBTree<T>::remove()
 
     // TODO
     //  Check which of BSTree cases 0,1,2,3 we have (see theoretical class slides).
-
+    if(current_->left() == nullptr && current_->right() == nullptr){
+        subtree = nullptr;
+    }else if(current_->right() == nullptr){
+        subtree = current_->left();
+    }else if(current_->left() == nullptr){
+        subtree = current_->right();
+    }else{
+        replace_with_subtree = false;
+    }
     //
 
     if (replace_with_subtree)
     {
         // TODO
         // Manage cases 0,1,2
-
+        if(parent_ == nullptr){
+            root_ = subtree;
+        }else if(parent_->right() == current_){
+            parent_->set_right(subtree);
+        }else{
+            parent_->set_left(subtree);
+        }
         //
         assert(check_parent_chains());
         make_red_black_after_removing(subtree);
@@ -765,7 +807,10 @@ void RBTree<T>::remove()
     {
         // TODO
         // Manage case 3.
-
+        typename RBTNode<T>::Ref aux = current_;
+        find_inorder_successor();
+        aux->set_item(current_->item());
+        remove();
         //
     }
 
@@ -790,7 +835,7 @@ template <class T>
 RBTree<T>::RBTree(typename RBTNode<T>::Ref root_node)
 {
     // TODO
-
+    root_ = root_node;
     //
     assert(!current_exists());
 }
@@ -811,7 +856,7 @@ void RBTree<T>::set_left(Ref subtree)
     assert(!is_empty());
 
     // TODO
-
+        root_->set_left(subtree->root_);
     //
 
     assert(subtree->is_empty() || left()->item() == subtree->item());
@@ -824,7 +869,7 @@ void RBTree<T>::set_right(Ref subtree)
     assert(!is_empty());
 
     // TODO
-
+        root_->set_right(subtree->root_);
     //
     assert(subtree->is_empty() || right()->item() == subtree->item());
     assert(!subtree->is_empty() || right()->is_empty());
@@ -835,7 +880,7 @@ typename RBTNode<T>::Ref RBTree<T>::current_node() const
 {
     typename RBTNode<T>::Ref node = nullptr;
     // TODO
-
+        node = current_;
     //
     return node;
 }
@@ -844,7 +889,7 @@ template <class T>
 void RBTree<T>::set_current_node(typename RBTNode<T>::Ref new_curr)
 {
     // TODO
-    
+        current_ = new_curr;
     //
     assert(new_curr == current_node());
 }
@@ -854,7 +899,7 @@ typename RBTNode<T>::Ref RBTree<T>::root_node() const
 {
     typename RBTNode<T>::Ref node = nullptr;
     // TODO
-
+    node = root_;
     //
     return node;
 }
@@ -863,7 +908,7 @@ template <class T>
 void RBTree<T>::set_root_node(typename RBTNode<T>::Ref new_root)
 {
     // TODO
-
+        root_ = new_root;
     //
     assert(new_root == root_node());
 }
@@ -873,7 +918,7 @@ typename RBTNode<T>::Ref RBTree<T>::parent_node() const
 {
     typename RBTNode<T>::Ref node = nullptr;
     // TODO
-
+        node = parent_;
     //
     return node;
 }
@@ -887,7 +932,13 @@ void RBTree<T>::find_inorder_successor()
     T old_curr = current();
 #endif
     // TODO
+    parent_ = current_;
+    current_ = current_->right();
 
+    while(current_->left() == nullptr){
+        parent_ = current_;
+        current_ = current_->left();
+    }
     //
     assert(current_exists() && current_node()->left() == nullptr);
 #ifndef NDEBUG
