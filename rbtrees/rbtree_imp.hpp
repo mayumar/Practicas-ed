@@ -349,7 +349,12 @@ void create_inserting_median(std::vector<T> const &data,
     // Hint: if (end==begin) none thing must be done (it is an empty sub array)
     //  else, insert the median in the tree and (recursively) process
     //  the two sub sequences [begin, median_idx) and [median_idx+1, end)
-
+    if(end != begin){
+        int median = (begin + end)/2;
+        tree->insert(data[median]);
+        create_inserting_median(data, begin, median, tree->left());
+        create_inserting_median(data, median+1, end, tree->right());
+    }
     //
 }
 
@@ -364,6 +369,20 @@ create_perfectly_balanced_bstree(std::vector<T> &data)
     // Then you should use the above create_inserting_median function
     // on a empty tree to recursively create the perfectly balanced bstree.
 
+    if(data.empty())
+        return tree;
+
+    for(size_t i=0; i<data.size(); i++){
+        for(size_t j=i+1; j<data.size(); j++){
+            if(data[i] > data[j]){
+                T aux = data[i];
+                data[i] = data[j];
+                data[j] = aux;
+            }
+        }
+    }
+
+    create_inserting_median(data, 0, data.size(), tree);
     //
     assert(tree != nullptr);
     return tree;
@@ -549,17 +568,17 @@ bool RBTree<T>::has(const T &k) const
     //       need to use "const_cast" to remove constness of "this" and
     //       save/restore the old state of current before returning.
 
-    current_ = root_;
-    parent_ = nullptr;
-    while(current_ != nullptr && !found){
-        if(current_->item() == k){
+    auto aux = root_;
+    typename RBTNode<T>::Ref auxp = nullptr;
+    while(aux != nullptr && !found){
+        if(aux->item() == k){
             found = true;
         }else{
-            parent_ = current_;
-            if(current_->item() > k){
-                current_ = current_->left();
+            auxp = aux;
+            if(aux->item() > k){
+                aux = aux->left();
             }else{
-                current_ = current_->right();
+                aux = aux->right();
             }
         }
     }
@@ -935,7 +954,7 @@ void RBTree<T>::find_inorder_successor()
     parent_ = current_;
     current_ = current_->right();
 
-    while(current_->left() == nullptr){
+    while(current_->left() != nullptr){
         parent_ = current_;
         current_ = current_->left();
     }
