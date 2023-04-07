@@ -352,8 +352,8 @@ void create_inserting_median(std::vector<T> const &data,
     if(end != begin){
         int median = (begin + end)/2;
         tree->insert(data[median]);
-        create_inserting_median(data, begin, median, tree->left());
-        create_inserting_median(data, median+1, end, tree->right());
+        create_inserting_median(data, begin, median, tree);
+        create_inserting_median(data, median+1, end, tree);
     }
     //
 }
