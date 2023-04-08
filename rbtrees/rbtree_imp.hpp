@@ -210,7 +210,8 @@ void RBTNode<T>::set_child(int idx, RBTNode<T>::Ref new_child)
         right_ = new_child;
     }
 
-    new_child->parent_ = this_;
+    if(new_child != nullptr)
+        new_child->parent_ = this_;
     //
     assert(idx == 0 || new_child == right());
     assert(idx == 1 || new_child == left());
@@ -1045,17 +1046,33 @@ RBTree<T>::rotate(typename RBTNode<T>::Ref P,
     // TODO
     // Remember update links to parents.
     // Hint: you can see wikipedia: https://en.wikipedia.org/wiki/Tree_rotation
-    auto g = P->parent();
-    auto s = P->child(1-dir);
-    auto cn = s->child(dir);
 
-    P->set_child(1-dir, cn);
-    s->set_child(dir, P);
-    if(g != nullptr){
-        auto g_p_dir = (g->child(0)==P) ? 0 : 1;
-        g->set_child(g_p_dir, s);
+    typename RBTNode<T>::Ref G = P->parent();
+    int g_p_dir;
+    int p_n_dir = (P->child(0)==N) ? 0 : 1;
+    typename RBTNode<T>::Ref S = P->child(1-p_n_dir);
+    typename RBTNode<T>::Ref CN = nullptr;
+
+    CN = N->child(dir);
+    if(CN != nullptr)
+        CN->set_parent(P);
+    /*
+    if(S != nullptr){
+        CN = S->child(p_n_dir);
+        S->set_child(dir, P);
+    }
+    */
+
+    P->set_parent(N);
+    N->set_parent(G);
+    P->set_child(1-dir, CN);
+    N->set_child(dir, P);
+
+    if(G != nullptr){
+        g_p_dir = (G->child(0)==P) ? 0 : 1;
+        G->set_child(g_p_dir, N);
     }else{
-
+        set_root_node(N);
     }
     //
     return N;
@@ -1128,6 +1145,8 @@ void RBTree<T>::make_red_black_after_inserting()
             {
                 // TODO: cases 3c (LR) 3d (RL)
                 rotate(P, 1-p_n_dir);
+                P = G->child(g_p_dir);
+                N = P->child(1-p_n_dir);
                 //
             }
             // TODO: cases 3a (LL) 3b (RR)
