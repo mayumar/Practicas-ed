@@ -633,7 +633,26 @@ bool RBTree<T>::is_a_binary_search_tree() const
     // Remember: use a lambda function with signature '(T v) -> bool' to
     //  implement the Processor.
     //
+    if(is_empty()){
+        return true;
+    }else{
+        T* item = nullptr;
 
+        auto p = [&item] (T it) {
+            if(item == nullptr){
+                item = new T(it);
+                return true;
+            }else{
+                if(*item < it){
+                    *item = it;
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        is_bst = infix_process<T>(root_, p);
+    }
     //
     return is_bst;
 }
@@ -648,6 +667,20 @@ bool RBTree<T>::meet_red_invariant() const
     // TODO
     // Remember: A red node must not have a red child.
     // Remember: An empty tree meets the invariant.
+    if(is_empty()){
+        return true;
+    }else{
+        if(root_->color() == RBTNode<T>::RED){
+            if(root_->left() != nullptr && root_->left()->color() == RBTNode<T>::RED){
+               return false;
+            }else if(root_->right() != nullptr && root_->right()->color() == RBTNode<T>::RED){
+                return false;
+            }
+        }
+    }
+
+    is_met = left()->meet_red_invariant();
+    is_met = right()->meet_red_invariant();
 
     //
     return is_met;
@@ -664,7 +697,38 @@ bool RBTree<T>::meet_black_invariant() const
     // TODO
     // Remember: The number of black nodes for each path from root to any leaf must be equal.
     // Hint: use a lambda function to travel the tree.
+    if(is_empty()){
+        return true;
+    }else{
+        int nBlackl = -1;
+        int nBlackr = -1;
 
+        auto aux = root_;
+
+        while(aux != nullptr){
+            if(aux->color() == RBTNode<T>::BLACK){
+                nBlackl++;
+            }
+            aux = aux->left();
+        }
+
+        aux = root_;
+
+        while(aux != nullptr){
+            if(aux->color() == RBTNode<T>::BLACK){
+                nBlackr++;
+            }
+            aux = aux->right();
+        }
+
+        if(nBlackl != nBlackr){
+            return false;
+        }
+
+        is_met = left()->meet_black_invariant();
+        is_met = right()->meet_black_invariant();
+
+    }
     //
     return is_met;
 #endif
@@ -981,7 +1045,18 @@ RBTree<T>::rotate(typename RBTNode<T>::Ref P,
     // TODO
     // Remember update links to parents.
     // Hint: you can see wikipedia: https://en.wikipedia.org/wiki/Tree_rotation
+    auto g = P->parent();
+    auto s = P->child(1-dir);
+    auto cn = s->child(dir);
 
+    P->set_child(1-dir, cn);
+    s->set_child(dir, P);
+    if(g != nullptr){
+        auto g_p_dir = (g->child(0)==P) ? 0 : 1;
+        g->set_child(g_p_dir, s);
+    }else{
+
+    }
     //
     return N;
 }
@@ -1005,7 +1080,7 @@ void RBTree<T>::make_red_black_after_inserting()
     if (P == nullptr)
     {
         //TODO: Case 0:
-
+        N->set_color(RBTNode<T>::BLACK);
         //
     }
 
@@ -1014,19 +1089,31 @@ void RBTree<T>::make_red_black_after_inserting()
         if (P->color() == RBTNode<T>::BLACK)
         {
             //TODO Case 1: reqs 3 and 4 are met.
-
+            return;
             //
         }
 
         // From here P is red.
 
         //TODO: update G, g_p_dir, U.
+        G = P->parent();
+        g_p_dir = (G->child(0)==P) ? 0 : 1;
 
+        U = G->child(1-g_p_dir);
         //
 
         if (U != nullptr && U->color() == RBTNode<T>::RED)
         {
             //TODO Case 2:
+            P->set_color(RBTNode<T>::BLACK);
+            U->set_color(RBTNode<T>::BLACK);
+
+            if(G->parent() == nullptr){
+                return;
+            }else{
+                G->set_color(RBTNode<T>::RED);
+                N = G;
+            }
 
             //
         }
@@ -1035,16 +1122,18 @@ void RBTree<T>::make_red_black_after_inserting()
             //Case 3:
 
             //TODO: update p_n_dir
-
+            p_n_dir = (P->child(0)==N) ? 0 : 1;
             //
             if (g_p_dir != p_n_dir)
             {
                 // TODO: cases 3c (LR) 3d (RL)
-
+                rotate(P, 1-p_n_dir);
                 //
             }
             // TODO: cases 3a (LL) 3b (RR)
-
+            G->set_color(RBTNode<T>::RED);
+            P->set_color(RBTNode<T>::BLACK);
+            rotate(G, 1-g_p_dir);
             //
             return;
         }
