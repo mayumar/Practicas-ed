@@ -702,7 +702,7 @@ bool RBTree<T>::meet_black_invariant() const
         return true;
     }else{
         int nBlackl = -1;
-        int nBlackr = -1;
+        int nBlack = -1;
 
         auto aux = root_;
 
@@ -713,22 +713,27 @@ bool RBTree<T>::meet_black_invariant() const
             aux = aux->left();
         }
 
-        aux = root_;
+        //std::function<void(typename RBTNode<T>::Ref, std::vector<T>)> go_down;
 
-        while(aux != nullptr){
-            if(aux->color() == RBTNode<T>::BLACK){
-                nBlackr++;
+        std::function<bool(typename RBTNode<T>::Ref, int)> p;
+        p = [&p, &nBlackl] (typename RBTNode<T>::Ref node, int nBlack){
+            if(node == nullptr){
+                if(nBlack != nBlackl){
+                    return false;
+                }else{
+                    return true;
+                }
+            }else{
+                if(node->color() == RBTNode<T>::BLACK){
+                    nBlack++;
+                }
+                p(node->left(), nBlack);
+                p(node->right(), nBlack);
             }
-            aux = aux->right();
-        }
-
-        if(nBlackl != nBlackr){
             return false;
-        }
+        };
 
-        is_met = left()->meet_black_invariant();
-        is_met = right()->meet_black_invariant();
-
+        is_met = !p(root_, nBlack);
     }
     //
     return is_met;
