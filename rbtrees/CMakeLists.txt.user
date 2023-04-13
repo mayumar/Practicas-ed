@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 9.0.1, 2023-04-10T13:28:47. -->
+<!-- Written by QtCreator 9.0.1, 2023-04-10T14:12:50. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -394,13 +394,13 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">test_rbtree</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.test_rbtree</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">test_rbtree</value>
-    <value type="QString" key="RunConfiguration.Arguments">00</value>
+    <value type="QString" key="RunConfiguration.Arguments">11</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory">/home/mayumar/Escritorio/practicased/rbtrees/tests_rbtree_inserting</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory">/home/mayumar/Escritorio/practicased/rbtrees/tests_rbtree_removing</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/mayumar/Escritorio/practicased/build-rbtrees-Desktop-Debug</value>
    </valuemap>
    <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">2</value>
