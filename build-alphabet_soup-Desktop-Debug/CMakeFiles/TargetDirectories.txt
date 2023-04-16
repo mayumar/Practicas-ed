@@ -1,0 +1,5 @@
+/home/mayumar/Escritorio/practicased/build-alphabet_soup-Desktop-Debug/CMakeFiles/test_trie_node.dir
+/home/mayumar/Escritorio/practicased/build-alphabet_soup-Desktop-Debug/CMakeFiles/test_trie.dir
+/home/mayumar/Escritorio/practicased/build-alphabet_soup-Desktop-Debug/CMakeFiles/test_alphabet_soup_solver.dir
+/home/mayumar/Escritorio/practicased/build-alphabet_soup-Desktop-Debug/CMakeFiles/edit_cache.dir
+/home/mayumar/Escritorio/practicased/build-alphabet_soup-Desktop-Debug/CMakeFiles/rebuild_cache.dir

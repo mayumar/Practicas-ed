@@ -170,7 +170,9 @@ protected:
 
     //TODO
     //Hint: use std::map to implement the dictionary for next symbols.
-
+    bool isKey_;
+    std::map <char, TrieNode::Ref> dict_;
+    std::map <char, TrieNode::Ref>::iterator current_;
     //
 };
 

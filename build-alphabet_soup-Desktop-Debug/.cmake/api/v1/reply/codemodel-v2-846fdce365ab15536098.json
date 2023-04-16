@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "alphabet_soup",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "test_alphabet_soup_solver::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_alphabet_soup_solver-Debug-9266a1eef9cfa93207e8.json",
+					"name" : "test_alphabet_soup_solver",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "test_trie::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_trie-Debug-510e5f9593295031a416.json",
+					"name" : "test_trie",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "test_trie_node::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_trie_node-Debug-c99b1e88c27dd4dd35f0.json",
+					"name" : "test_trie_node",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/mayumar/Escritorio/practicased/build-alphabet_soup-Desktop-Debug",
+		"source" : "/home/mayumar/Escritorio/practicased/alphabet_soup"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}
