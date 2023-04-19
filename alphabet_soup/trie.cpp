@@ -50,7 +50,47 @@ Trie::Ref Trie::create(std::istream& in) noexcept(false)
 {
     Trie::Ref trie = nullptr;
     //TODO
+    trie = Trie::create();
+    std::string token;
+    in >> token;
 
+    if(token == "["){
+        in >> token;
+
+        if(token == "\""){
+            in >> token;
+
+            if(token != "\""){
+                std::string pref;
+
+                pref = std::stoi(token, nullptr, 16);
+
+                in >> token;
+
+                if(token != "\""){
+                    throw std::runtime_error("Wrong input format");
+                }
+
+            }
+
+
+
+        }else{
+            throw std::runtime_error("Wrong input format");
+        }
+
+
+        trie->root_ = TrieNode::create(in);
+
+        in >> token;
+
+        if(token != "]"){
+            throw std::runtime_error("Wrong input format");
+        }
+
+    }else if(token != "[]"){
+        throw std::runtime_error("Wrong input format");
+    }
 
     //
     return trie;
@@ -202,7 +242,7 @@ Trie::insert(std::string const& k)
 
     auto node = root_;
 
-    for(int i = 0; i < k.size(); i++){
+    for(size_t i = 0; i < k.size(); i++){
         if(node->has(k[i])){
             node = node->child(k[i]);
         }else{
@@ -227,7 +267,7 @@ Trie::find_node(std::string const& pref) const
     //TODO
     //Remember: the prefix "" must return the trie's root node.
     node = root_;
-    int i = 0;
+    size_t i = 0;
     while(i<pref.size() && node!=nullptr){
         if(node->has(pref[i])){
             node = node->child(pref[i]);
@@ -245,7 +285,28 @@ Trie::fold(std::ostream& out) const
 {
     //TODO
 
+    if(is_empty()){
+        out << "[]";
+    }else{
+        out << "[ ";
+        out << "\"";
+        if(prefix_ == ""){
+            out << " ";
+        }else{
 
+            out << " ";
+
+            for(size_t i = 0; i < prefix_.size(); i++){
+                out << std::hex << (short)prefix_[i];
+                out << " ";
+            }
+        }
+
+        out << "\"";
+        out << " ";
+        root_->fold(out);
+        out << " ]";
+    }
 
     //
     return out;
