@@ -184,7 +184,7 @@ Trie::current_symbol() const
     char symbol = 0;
     //TODO
 
-    symbol = current_->prefix_[prefix_.size()-1];
+    symbol = current_->prefix_[prefix_.size()];
 
     //
     return symbol;
@@ -257,12 +257,18 @@ Trie::find_symbol(char symbol)
     assert(!is_empty());
     bool found = false;
     //TODO
-    auto node = find_node(prefix_+symbol);
 
-    if(node != nullptr){
+    if(root_->find_child(symbol)){
+
+        if(!current_exists()){
+            current_ = Trie::create();
+        }
+
         found = true;
-        current_->root_ = node;
+        current_->root_ = root_->current_node();
         current_->prefix_ = prefix_+symbol;
+    }else{
+        current_ = nullptr;
     }
 
     //
@@ -278,9 +284,18 @@ Trie::goto_first_symbol()
     assert(!is_empty());
     //TODO
     root_->goto_first_child();
-    if(root_->current_exists()){
-        current_ = Trie::create(root_->current_node(), prefix_+root_->current_symbol());
+
+    if(!current_exists()){
+        current_ = Trie::create();
     }
+
+    if(root_->current_exists()){
+        current_->root_ = root_->current_node();
+        current_->prefix_ = prefix_+root_->current_symbol();
+    }else{
+        current_ = nullptr;
+    }
+
     //
     assert(!current_exists() ||
            current()->prefix()==prefix()+current_symbol());
@@ -291,6 +306,17 @@ Trie::goto_next_symbol()
 {
     assert(current_exists());
     //TODO
+    root_->goto_next_child();
 
+    if(!current_exists()){
+        current_ = Trie::create();
+    }
+
+    if(root_->current_exists()){
+        current_->root_ = root_->current_node();
+        current_->prefix_ = prefix_+root_->current_symbol();
+    }else{
+        current_ = nullptr;
+    }
     //
 }
