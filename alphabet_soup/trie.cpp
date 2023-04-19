@@ -161,6 +161,17 @@ preorder_traversal(TrieNode::Ref node, std::string prefix,
     //TODO
     //Remember: node->is_key() means the prefix is a key too.
 
+    if(node->is_key()){
+        keys.push_back(prefix);
+    }
+
+    node->goto_first_child();
+
+    while(node->current_exists()){
+        preorder_traversal(node->current_node(), prefix+node->current_symbol(), keys);
+        node->goto_next_child();
+    }
+
     //
 }
 
@@ -171,7 +182,7 @@ Trie::retrieve(std::vector<std::string>& keys) const
     assert(!is_empty());
     //TODO
     //Remember add the subtrie's prefix to the retrieve keys.
-
+    preorder_traversal(root_, prefix_, keys);
     //
 }
 
