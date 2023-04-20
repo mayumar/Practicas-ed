@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 9.0.1, 2023-04-19T14:09:09. -->
+<!-- Written by QtCreator 9.0.1, 2023-04-20T19:17:06. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -392,7 +392,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">test_trie</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.test_trie</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">test_trie</value>
-    <value type="QString" key="RunConfiguration.Arguments">12</value>
+    <value type="QString" key="RunConfiguration.Arguments">14</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>

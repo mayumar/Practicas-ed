@@ -60,14 +60,13 @@ Trie::Ref Trie::create(std::istream& in) noexcept(false)
         if(token == "\""){
             in >> token;
 
-            if(token != "\""){
-                std::string pref;
+            while(token != "\""){
 
-                pref = std::stoi(token, nullptr, 16);
+                trie->prefix_ += std::stoi(token, nullptr, 16);
 
                 in >> token;
 
-                if(token != "\""){
+                if(token == "["){
                     throw std::runtime_error("Wrong input format");
                 }
 

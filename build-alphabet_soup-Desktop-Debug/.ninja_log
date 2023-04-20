@@ -16,3 +16,15 @@
 1	511	1681937997989433427	CMakeFiles/test_alphabet_soup_solver.dir/trie.cpp.o	c5a0c74911bc5477
 424	521	1681937997997433435	test_trie	f0b33a03ef662987
 511	606	1681937998085433527	test_alphabet_soup_solver	8d1788ba0af293b6
+1	453	1682010939470493419	CMakeFiles/test_trie.dir/trie.cpp.o	1cdd8e2ee5233bba
+2	465	1682010939482493467	CMakeFiles/test_alphabet_soup_solver.dir/trie.cpp.o	c5a0c74911bc5477
+454	552	1682010939570493814	test_trie	f0b33a03ef662987
+465	579	1682010939598493925	test_alphabet_soup_solver	8d1788ba0af293b6
+1	456	1682011014510785268	CMakeFiles/test_alphabet_soup_solver.dir/trie.cpp.o	c5a0c74911bc5477
+1	465	1682011014518785299	CMakeFiles/test_trie.dir/trie.cpp.o	1cdd8e2ee5233bba
+465	572	1682011014626785712	test_trie	f0b33a03ef662987
+456	574	1682011014630785728	test_alphabet_soup_solver	8d1788ba0af293b6
+1	396	1682011091511075484	CMakeFiles/test_trie.dir/trie.cpp.o	1cdd8e2ee5233bba
+1	437	1682011091551075632	CMakeFiles/test_alphabet_soup_solver.dir/trie.cpp.o	c5a0c74911bc5477
+396	491	1682011091607075840	test_trie	f0b33a03ef662987
+437	545	1682011091659076033	test_alphabet_soup_solver	8d1788ba0af293b6
