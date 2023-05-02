@@ -23,7 +23,10 @@ uniform()
     //TODO
     //Hint: Use std::uniform_real_distribution<double>
     //Remember use Generator as random bit generator.    
-   
+    std::uniform_real_distribution<double> distribution(0.0, 1.0);
+
+    ret_v = distribution(Generator);
+
     //
     assert(0.0l<=ret_v && ret_v<1.0l);
     return ret_v;
@@ -37,7 +40,9 @@ pick_at_random(std::uint64_t const& a, std::uint64_t const& b)
     std::uint64_t ret_v = 0;
     //TODO
     //Hint: Use std::uniform_int_distribution<std::uint64_t>
+    std::uniform_int_distribution<std::uint64_t> distribution(a, b);
 
+    ret_v = distribution(Generator);
     //
     assert(a<=ret_v && ret_v<=b);
     return  ret_v;
@@ -52,7 +57,10 @@ UHash::UHash(size_t M, std::uint64_t P)
     assert(M>1 && (M & (M-1))==0); //m is two power.
     assert(M<P);
     // TODO
-    
+    m_ = M;
+    p_ = P;
+    a_ = pick_at_random(0, p_);
+    b_ = pick_at_random(0, p_);
     //
     assert(M==m());
     assert(P==p());
@@ -74,7 +82,10 @@ UHash::UHash(size_t M, std::uint64_t P, std::uint64_t A,
     assert(0<A && A<P);
     assert(0<=B && B<P);    
     // TODO
-    
+    m_ = M;
+    p_ = P;
+    a_ = A;
+    b_ = B;
     
     //
     assert(M==m());
@@ -112,7 +123,8 @@ UHash::operator()(std::uint64_t k) const
     // TODO
     // Hint: use static_cast to static type conversions.
     
-    
+    hash = ( (a() * k + b()) % p() ) % m();
+
     //
     assert(hash<m());
     return hash;
@@ -131,6 +143,7 @@ UHash::m() const
     size_t ret_v = 0;
     // TODO
     
+    ret_v = m_;
     
     //
     return ret_v;
@@ -142,7 +155,8 @@ UHash::p() const
     size_t ret_v = 0;
     // TODO
     
-    
+    ret_v = p_;
+
     //
     return ret_v;
 }
@@ -153,6 +167,7 @@ UHash::a() const
     size_t ret_v = 0;
     // TODO
     
+    ret_v = a_;
     
     //
     return ret_v;
@@ -163,6 +178,8 @@ UHash::b() const
 {
     size_t ret_v = 0;
     // TODO
+
+    ret_v = b_;
 
     //
     return ret_v;
