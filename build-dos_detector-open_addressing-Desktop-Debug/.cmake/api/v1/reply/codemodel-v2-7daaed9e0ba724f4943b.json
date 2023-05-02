@@ -1,0 +1,87 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "dos_detect-open_adrressing",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "test_dos_detector::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_dos_detector-Debug-8f2a513ee9a84da986a4.json",
+					"name" : "test_dos_detector",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "test_hash_f::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_hash_f-Debug-aeae52868a308edae2fe.json",
+					"name" : "test_hash_f",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "test_hash_table::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_hash_table-Debug-30ed995baa2d521202b1.json",
+					"name" : "test_hash_table",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "test_ip_utils::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_ip_utils-Debug-7972b154c3cdb86ce684.json",
+					"name" : "test_ip_utils",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/mayumar/Escritorio/practicased/build-dos_detector-open_addressing-Desktop-Debug",
+		"source" : "/home/mayumar/Escritorio/practicased/dos_detector-open_addressing"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}
