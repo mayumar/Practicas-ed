@@ -120,6 +120,8 @@ protected:
     //      empty state during most time).
     //      @see https://en.cppreference.com/w/cpp/memory/unique_ptr
 
+    std::unique_ptr<std::pair<K,V>> entry_;
+    EntryState state_;
 
     //
 };

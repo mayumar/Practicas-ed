@@ -59,8 +59,8 @@ UHash::UHash(size_t M, std::uint64_t P)
     // TODO
     m_ = M;
     p_ = P;
-    a_ = pick_at_random(0, p_);
-    b_ = pick_at_random(0, p_);
+    a_ = pick_at_random(1, p_-1);
+    b_ = pick_at_random(0, p_-1);
     //
     assert(M==m());
     assert(P==p());
@@ -107,6 +107,7 @@ UHash::Ref UHash::pick_at_new(std::uint64_t const& new_m) const
     UHash::Ref new_f;
     // TODO
     
+    new_f = UHash::create(new_m, p());
     
     //
     assert (new_f->m() == new_m);
@@ -232,6 +233,8 @@ LPHash::operator()(uint64_t k, size_t iter) const
     //Hint: you could save the first value in a static variable to avoid recompute it when
     //      a collision happened.
 
+    ret_v = (iter == 0) ? (*hash())(k) : ((*hash())(k) + iter) % m();
+
     //
     return ret_v;
 }
@@ -281,6 +284,9 @@ QPHash::operator()(std::uint64_t k, size_t iter) const
     //Hint: you could save the first value to avoid recompute it when
     //      a collision happened.
     //Remember: m is two power and c1= c2 = 1/2.
+    long aux = 0.5*iter + 0.5*iter*iter;
+
+    ret_v = (iter == 0) ? (*hash())(k) : ((*hash())(k) + aux) % m();
 
     //
     return ret_v;
@@ -332,7 +338,9 @@ RPHash::operator()(std::uint64_t k, size_t iter) const
     //         regarding the collision algorithm.
     // Hint: you could save the first value to avoid recompute it when
     //      a collision happened.    
+    long c = (m()/2)-1;
 
+    ret_v = (iter == 0) ? (*hash())(k) : ((*this)(k, iter-1) + c) % m();
 
     //
     return ret_v;
@@ -390,7 +398,8 @@ DHash::operator()(std::uint64_t k, size_t iter) const
     //Remember: if iter == 0 (first attempt), compute the hash value using hash1.
     //         iter>0 means a collision happened so get the next proper value
     //         using a second hash from hash2 function.
-    
+
+    ret_v = ((*hash1())(k) + iter*(*hash2())(k)) % m();
     
     //
     return ret_v;
