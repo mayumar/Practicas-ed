@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 9.0.1, 2023-05-05T11:25:09. -->
+<!-- Written by QtCreator 9.0.1, 2023-05-06T19:46:12. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -411,7 +411,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">test_hash_table</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.test_hash_table</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">test_hash_table</value>
-    <value type="QString" key="RunConfiguration.Arguments">00</value>
+    <value type="QString" key="RunConfiguration.Arguments">05</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>

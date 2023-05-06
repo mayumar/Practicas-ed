@@ -80,7 +80,7 @@ HashTable<K, V, KeyToInt>::has(K const& k) const
         aux = (*hash_)((*key_to_int_)(k), i);
         i++;
 
-    }while((*table_)[aux].is_empty() || (*table_)[aux].get_key() == k);
+    }while(!((*table_)[aux].is_empty() || (*table_)[aux].get_key() == k));
 
     ret_v = (*table_)[aux].is_valid() && (*table_)[aux].get_key() == k;
 
@@ -185,6 +185,7 @@ HashTable<K, V, KeyToInt>::remove()
     //TODO
     //Remember: we are using a mark to sign "deleted".
 
+    (*table_)[curr_].set_deleted();
 
     //
     assert(!is_valid());
@@ -197,7 +198,7 @@ HashTable<K, V, KeyToInt>::set_value(const V& v)
 {
     assert(is_valid());
     //TODO
-
+    (*table_)[curr_].set_value(v);
     //
     assert(get_value()==v);
 }
