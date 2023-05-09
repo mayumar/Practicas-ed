@@ -21,7 +21,13 @@ void OS::remove_banned_ips(size_t now)
 
     //TODO:
     //Push back in vector ips the banned ips whose ban time was finished now.
-
+    banned_ips_.goto_begin();
+    while(banned_ips_.is_valid()){
+        if(banned_ips_.get_value() <= now){
+            ips.push_back(banned_ips_.get_key());
+        }
+        banned_ips_.goto_next();
+    }
     //
 
     std::cout << "IPs which ban time was finished at time " << now << " [";
@@ -30,7 +36,10 @@ void OS::remove_banned_ips(size_t now)
     std::cout << " ]" << std::endl;
 
     //TODO: Remove the ips from the banned_ips_ table.
-
+    for(size_t i = 0; i < ips.size(); i++){
+        banned_ips_.find(ips[i]);
+        banned_ips_.remove();
+    }
     //
 
 #ifndef NDEBUG
@@ -47,7 +56,7 @@ OS::ban_ip(IP const& ip, size_t ban_time)
     //TODO
     //Remember: Insert in banned_ips_ table the time when the ban
     //time will be finished.
-
+    banned_ips_.insert(ip, time_+ban_time);
     //
 }
 
@@ -57,7 +66,7 @@ OS::is_banned(IP const& ip) const
     bool ret_val = false;
     //TODO
     //Hint: Has banned_ips_ table that ip?
-
+    ret_val = banned_ips_.has(ip);
     //
     return ret_val;
 }
@@ -68,7 +77,13 @@ OS::banned_ips() const
     std::vector<std::pair<IP, size_t>> ips;
     //TODO
     //Hint: use const_cast to remove const from this.
+    const_cast<OS&>(*this).banned_ips_.goto_begin();
+    while(banned_ips_.is_valid()){
 
+        ips.push_back(std::pair<IP, size_t>({banned_ips_.get_key(), banned_ips_.get_value()}));
+
+        const_cast<OS&>(*this).banned_ips_.goto_next();
+    }
     //
     return ips;
 }
