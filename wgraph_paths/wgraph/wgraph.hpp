@@ -102,6 +102,10 @@ protected:
 
    //TODO
    
+   T item_;
+   size_t label_;
+   bool visited_;
+
    //
 };
 
@@ -203,7 +207,10 @@ protected:
 
     //TODO: think about a representation.
     //Remember: to change the weight of a edge, the graph's weight matrix must be updated.
-    
+    E weight_;
+    NodeRef first_;
+    NodeRef second_;
+    typename FMatrix::Ref wmatrix_;
     //
 };
 
@@ -588,7 +595,11 @@ public:
     // TODO: Think about a representation using a "weighted adjacent matrix"
     // Remember: the graph will have a maximum number of vertices (capacity) 
     //           but currently only has size<capacity vertices.    
-    
+    std::vector<NodeRef> nodes_;
+    FMatrix::Ref edges_;
+    size_t currnode_;
+    size_t curredge_;
+    size_t capacity_;
     //
 };
 

@@ -20,7 +20,9 @@ template<class T>
 WNode<T>::WNode(size_t label, T const& v)
 {
     //TODO
-
+    item_ = v;
+    label_ = label;
+    visited_ = false;
     //
     assert(item()==v);
     assert(!is_visited());
@@ -31,7 +33,7 @@ T WNode<T>::item() const
 {
     T ret_v;
     //TODO
-
+    ret_v = item_;
     //
     return ret_v;
 }
@@ -41,7 +43,7 @@ size_t  WNode<T>::label() const
 {
     size_t ret_v = 0;
     //TODO
-
+    ret_v = label_;
     //
     return ret_v;
 }
@@ -51,7 +53,7 @@ bool  WNode<T>::is_visited() const
 {
     bool ret_v = false;
     //TODO
-
+    ret_v = visited_;
     //
     return ret_v;
 }
@@ -60,7 +62,7 @@ template<class T>
 void WNode<T>::set_item(T const& v)
 {
     //TODO
-
+    item_ = v;
     //
     assert(item()==v);
 }
@@ -70,7 +72,7 @@ template<class T>
 void WNode<T>::set_visited(bool new_st)
 {
     //TODO
-
+    visited_ = new_st;
     //
     assert(new_st || !is_visited());
     assert(!new_st || is_visited());
@@ -82,7 +84,10 @@ template<class T, class E>
 WEdge<T,E>::WEdge(NodeRef u, NodeRef v, FMatrix::Ref wmat)
 {
     //TODO
-
+    first_ = u;
+    second_ = v;
+    wmatrix_ = wmat;
+    weight_ = std::numeric_limits<float>::infinity();
     //
 }
 
@@ -91,7 +96,7 @@ E WEdge<T,E>::weight() const
 {
     E ret_val=std::numeric_limits<float>::infinity();
     //TODO
-
+    ret_val = weight_;
     //
     return ret_val;
 }
@@ -101,6 +106,12 @@ bool WEdge<T,E>::has(NodeRef const& n) const
 {
     bool ret_val = false;
     //TODO
+
+    if(n == first_){
+        return true;
+    }else if(n == second_){
+        return true;
+    }
 
     //
     return ret_val;
@@ -113,6 +124,7 @@ typename WEdge<T,E>::NodeRef WEdge<T,E>::other(NodeRef const& n) const
     NodeRef ret_val;
     //TODO
 
+    (n == first_) ? ret_val = second_ : ret_val = first_;
 
     //
     return ret_val;
@@ -123,7 +135,7 @@ typename WEdge<T,E>::NodeRef WEdge<T,E>::first() const
 {
     NodeRef ret_val;
     //TODO
-
+    ret_val = first_;
     //
     return ret_val;
 }
@@ -133,7 +145,7 @@ typename WEdge<T,E>::NodeRef WEdge<T,E>::second() const
 {
     NodeRef ret_val;
     //TODO
-
+    ret_val = second_;
     //
     return ret_val;
 }
@@ -142,7 +154,7 @@ template<class T, class E>
 void WEdge<T,E>::set_weight(E const& v)
 {
     //TODO
-
+    weight_ = v;
     //
     assert(weight()==v);
 }
@@ -158,6 +170,12 @@ WGraph<T>::WGraph (size_t capacity, float default_weight)
     //Remember: this a weighted graph, so all the nodes are connected with
     //          infinite weight by default.
 
+    edges_ = FMatrix::create(capacity,capacity,default_weight);
+    nodes_ = std::vector<NodeRef>();
+    currnode_ = capacity;
+    curredge_ = capacity;
+    capacity_ = capacity;
+
     //
 
     assert(is_empty());
@@ -170,7 +188,7 @@ bool WGraph<T>::is_empty() const
 {
     bool ret_v = true;
     //TODO
-    
+    ret_v = nodes_.empty();
     //
     assert(!ret_v || size()==0);
     return ret_v;
@@ -181,6 +199,8 @@ bool WGraph<T>::is_full() const
 {
     bool ret_v = true;
     //TODO
+
+    ret_v = (nodes_.size() == capacity_);
 
     //
     assert(!ret_v || size()==capacity());
@@ -193,6 +213,8 @@ size_t WGraph<T>::size() const
     size_t ret_v = 0;
     //TODO
 
+    ret_v = nodes_.size();
+
     //
     return ret_v;
 }
@@ -202,7 +224,7 @@ size_t WGraph<T>::capacity() const
 {
     size_t ret_v = 0;
     //TODO
-
+    ret_v = capacity_;
     //
     return ret_v;
 }
@@ -213,6 +235,8 @@ bool WGraph<T>::has(NodeRef u) const
     assert (u != nullptr);
     bool ret_v = true;
     //TODO
+
+    ret_v = (std::find(nodes_.begin(), nodes_.end(), u) != nodes_.end());
 
     //
     assert(!ret_v || (u->label()<capacity() && node(u->label())==u));
@@ -229,6 +253,12 @@ bool WGraph<T>::are_adjacent (NodeRef u, NodeRef v) const
     //          edge's weight is less than infinite.
     // Hint: use std::numeric_limits<float> facet to get infinite as float value.
 
+    if(edges_.get(u, v) < std::numeric_limits<float>::infinity()){
+        return true;
+    }else if(edges_.get(v, u) < std::numeric_limits<float>::infinity()){
+        return true;
+    }
+
     //
     return ret_v;
 }
@@ -239,7 +269,7 @@ bool WGraph<T>::has_current_node () const
     bool ret_v = false;
     //TODO
     //Hint: use attribute _size to mark "end".
-
+    ret_v = !(currnode_ == capacity_);
     //
     return ret_v;
 }
@@ -250,7 +280,7 @@ typename WGraph<T>::NodeRef WGraph<T>::current_node () const
     assert(has_current_node());
     NodeRef ret_v;
     //TODO
-
+    ret_v = nodes_[currnode_];
     //
     return ret_v;
 }
@@ -262,7 +292,9 @@ bool WGraph<T>::has_current_edge () const
     //TODO
     //Remember: first it must exist a current node.
     //Hint: use value size() to mark "end".
-
+    if(has_current_node()){
+        ret_v = !(curredge_ == capacity_);
+    }
     //
     assert(!ret_v || has_current_node());
     return ret_v;
@@ -274,7 +306,7 @@ float WGraph<T>::current_weight () const
     assert(has_current_edge());
     float ret_v = 0.0;
     //TODO
-
+    ret_v = edges_->get(currnode_,curredge_);
     //
     assert(ret_v<std::numeric_limits<float>::infinity());
     return ret_v;
@@ -285,7 +317,7 @@ FMatrix::Ref WGraph<T>::weight_matrix() const
 {
     FMatrix::Ref mat;
     //TODO
-
+    mat = edges_;
     //
     return mat;
 }
@@ -297,7 +329,7 @@ float WGraph<T>::weight(size_t u_label, size_t v_label) const
     assert(v_label<size());
     float ret_v = 0.0;
     //TODO
-
+    ret_v = edges_->get(u_label, v_label);
     //
     assert(ret_v == weight(node(u_label), node(v_label)));
     return ret_v;
@@ -310,7 +342,7 @@ float WGraph<T>::weight (NodeRef u, NodeRef v) const
     assert(has(v));
     float ret_v = 0.0;
     //TODO
-
+    ret_v = edges_->get(u->label(), v->label());
     //
     return ret_v;
 }
