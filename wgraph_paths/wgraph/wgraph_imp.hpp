@@ -253,9 +253,9 @@ bool WGraph<T>::are_adjacent (NodeRef u, NodeRef v) const
     //          edge's weight is less than infinite.
     // Hint: use std::numeric_limits<float> facet to get infinite as float value.
 
-    if(edges_.get(u, v) < std::numeric_limits<float>::infinity()){
+    if(edges_->get(u, v) < std::numeric_limits<float>::infinity()){
         return true;
-    }else if(edges_.get(v, u) < std::numeric_limits<float>::infinity()){
+    }else if(edges_->get(v, u) < std::numeric_limits<float>::infinity()){
         return true;
     }
 
@@ -355,6 +355,10 @@ typename WGraph<T>::EdgeRef WGraph<T>::edge(NodeRef u, NodeRef v) const
     EdgeRef ret_v=nullptr;
     //TODO
 
+    ret_v = WEdge<T,float>::create(u, v, edges_);
+
+    ret_v->set_weight(weight(u, v));
+
     //
     assert(ret_v->first()==u);
     assert(ret_v->second()==v);
@@ -371,6 +375,10 @@ typename WGraph<T>::EdgeRef WGraph<T>::edge(size_t u_label, size_t v_label) cons
     //TODO
     //Hint: use the static method WEdge::create().
 
+    ret_v = WEdge<T,float>::create(nodes_[u_label], nodes_[v_label], edges_);
+
+    ret_v->set_weight(weight(u_label, v_label))
+
     //
     assert(ret_v->first()->label()==u_label);
     assert(ret_v->second()->label()==v_label);
@@ -386,6 +394,10 @@ typename WGraph<T>::EdgeRef WGraph<T>::current_edge() const
     //TODO
     //Hint: use the static method WEdge::create().
 
+    ret_v = WEdge<T,float>::create(nodes_[currnode_], nodes_[curredge_], edges_);
+
+    ret_v->set_weight(current_weight());
+
     //
     assert(ret_v->first()==current_node() && ret_v->weight()<std::numeric_limits<float>::infinity());
     return ret_v;
@@ -397,7 +409,7 @@ typename WGraph<T>::NodeRef WGraph<T>::node(size_t label) const
     assert(label<size());
     NodeRef n;
     //TODO
-
+    n = nodes_[label];
     //
     return n;
 }
@@ -407,7 +419,9 @@ void WGraph<T>::set_visited(bool state)
 {
     //TODO
     // Remember: we only have visited flag in nodes, no one in edges.
-
+    for(size_t i = 0; i < nodes_.size(); i++){
+        nodes_[i]->set_visited(state);
+    }
     //
 }
 
@@ -417,6 +431,13 @@ void WGraph<T>::goto_first_node()
     assert(!is_empty());
     //TODO
     //Remember: the edge's cursor must be initialized too.
+
+    currnode_ = 0;
+    curredge_ = 0;
+
+    while(curredge_<capacity_ && !(edges_->get(currnode_,curredge_)<std::numeric_limits<float>::infinity())){
+        curredge_++;
+    }
 
     //
     assert(!has_current_edge()||current_edge()->first() == current_node());
@@ -430,7 +451,12 @@ void WGraph<T>::goto_first_edge()
     assert(has_current_node());
     //TODO
     // Remember: we consider here edges with weight < infinite.
-    
+
+    curredge_ = 0;
+
+    while(curredge_<capacity_ && !(edges_->get(currnode_,curredge_)<std::numeric_limits<float>::infinity())){
+        curredge_++;
+    }
 
     //
     assert(!has_current_edge()||current_edge()->first() == current_node());
@@ -445,6 +471,18 @@ void WGraph<T>::goto_next_node()
     //TODO
     // Remember: you must update the edge cursor too.
     
+    currnode_++;
+
+    curredge_ = 0;
+
+    if(has_current_node()){
+        while(curredge_<capacity_ && !(edges_->get(currnode_,curredge_)<std::numeric_limits<float>::infinity())){
+            curredge_++;
+        }
+    }else{
+        curredge_ = capacity_;
+    }
+
     //
     assert(has_current_node() || !has_current_edge());
     assert(!has_current_edge() || (current_edge()->first() == current_node()));
@@ -459,6 +497,11 @@ void WGraph<T>::goto_next_edge()
     //TODO
     // Remember: we consider here edges with weight < infinite.
 
+    curredge_++;
+
+    while(curredge_<capacity_ && !(edges_->get(currnode_,curredge_)<std::numeric_limits<float>::infinity())){
+        curredge_++;
+    }
 
     //
     assert(!has_current_edge() || current_edge()->first() == current_node());
@@ -472,6 +515,14 @@ void WGraph<T>::goto_node(NodeRef u)
     assert(has(u));
     //TODO
     // Remember: update edge cursor too.
+
+    currnode_ = u->label();
+
+    curredge_ = 0;
+
+    while(curredge_<capacity_ && !(edges_->get(currnode_,curredge_)<std::numeric_limits<float>::infinity())){
+        curredge_++;
+    }
 
     //
     assert(!has_current_edge() || current_edge()->first()==u);
@@ -488,6 +539,8 @@ void WGraph<T>::goto_edge(NodeRef u, NodeRef v)
     //TODO
     //Remember: node and edge cursors must be initialized too.
 
+    currnode_ = u->label();
+    curredge_ = v->label();
 
     //
     assert(current_node()==u);
@@ -505,6 +558,8 @@ void WGraph<T>::goto_edge(EdgeRef e)
     //TODO
     //Remember: node and edge cursors must be initialized too.
 
+    currnode_ = e->first()->label();
+    curredge_ = e->second()->label();
 
     //
     assert(current_node()==e->first());
@@ -520,7 +575,21 @@ typename WGraph<T>::NodeRef WGraph<T>::find_node(typename T::key_t const& key)
     //TODO
     // Remember: update node and edge cursors.
     // Remember: The item.key() is used to look for.
-    
+
+    bool stop = false;
+
+    currnode_ = 0;
+
+    while(currnode_ < nodes_.size() && !stop){
+        if(nodes_[currnode_]->item().key() == key){
+            stop = true;
+            ret_v = current_node();
+        }else{
+            currnode_++;
+        }
+    }
+
+    goto_first_edge();
 
     //
     assert((ret_v==nullptr) || (has_current_node() && current_node()==ret_v));
@@ -538,6 +607,19 @@ typename WGraph<T>::NodeRef WGraph<T>::find_next_node(typename T::key_t const& k
     // Remember: update node and edge cursors.
     // Remember: The item.key() is used to look for.
 
+    bool stop = false;
+
+    while(currnode_ < nodes_.size() && !stop){
+        if(nodes_[currnode_]->item() == key){
+            stop = true;
+            ret_v = current_node();
+        }else{
+            currnode_++;
+        }
+    }
+
+    goto_first_edge();
+
     //
     assert((ret_v==nullptr) || (has_current_node() && current_node()==ret_v));
     assert(!has_current_node() || current_node()->item()==key);
@@ -551,7 +633,7 @@ void WGraph<T>::set_current_weight(float new_w)
     assert(has_current_edge());
     //TODO
     // Remember: set infinite as new weight invalidates edge_cursor.
-
+    edges_->set(currnode_, curredge_, new_w);
     //
     assert(new_w < std::numeric_limits<float>::infinity() || !has_current_edge());
 }
@@ -563,7 +645,7 @@ void WGraph<T>::set_weight(size_t u_label, size_t v_label, float new_w)
     assert(v_label<size());
     // TODO
     // Remember: set infinite as new weight could invalidate the edge cursor if it is currently points to this edge.
-
+    edges_->set(u_label, v_label, new_w);
     //
     assert(new_w == weight(u_label, v_label));
     assert(!has_current_edge() || current_weight()<std::numeric_limits<float>::infinity());
@@ -576,7 +658,7 @@ void WGraph<T>::set_weight(NodeRef u, NodeRef v, float new_w)
     assert(has(v));
     //TODO
     // Remember: set infinite as new weight could invalidate the edge cursor if it is currently points to this edge.
-
+    edges_->set(u->label(), v->label(), new_w);
     //
     assert(weight(u, v)==new_w);
     assert(!has_current_edge() || current_weight()<std::numeric_limits<float>::infinity());
@@ -588,6 +670,12 @@ void WGraph<T>::add_node(T const& v)
     assert(! is_full());
     //TODO
     // Remember: update node and edge cursors.
+
+    NodeRef node = WNode<T>::create(nodes_.size(), v);
+
+    nodes_.push_back(node);
+
+    currnode_ = node->label();
 
     //
     assert(has_current_node());
@@ -601,6 +689,24 @@ WGraph<T>::fold(std::ostream& out) const
     //TODO
     //Hint: the Matrix template has a fold method.
 
+    if(is_empty()){
+        out << "[]";
+    }else{
+        out << "[ ";
+        out << capacity_;
+        out << " ";
+        out << nodes_.size();
+        out << " ";
+
+        for(size_t i = 0; i < nodes_.size(); i++){
+            out << nodes_[i]->item() << " ";
+        }
+
+        edges_->fold(out);
+
+        out << " ]";
+    }
+
     //
     return out;
 }
@@ -612,6 +718,45 @@ WGraph<T>::WGraph (std::istream& input) noexcept(false)
     //Remember: capacity is the max number of nodes that the graph could have.
     //          size is the current number of nodes (size <= capacity).
     //Hint: The Matrix template has a unfold method.
+
+    std::string token;
+
+    input >> token;
+
+    if(token == "["){
+        input >> token;
+
+        capacity_ = std::stoi(token);
+
+        currnode_ = capacity_;
+        curredge_ = capacity_;
+
+        input >> token;
+
+        size_t size = std::stoi(token);
+
+        nodes_ = std::vector<NodeRef>();
+
+        for(size_t i = 0; i < size; i++){
+            input >> token;
+
+            std::istringstream convert(token);
+
+            T new_t;
+
+            convert >> new_t;
+
+            NodeRef node = WNode<T>::create(nodes_.size(), new_t);
+
+            nodes_.push_back(node);
+
+        }
+
+        edges_ = FMatrix::create(input);
+
+        input >> token;
+
+    }
 
     //
     assert(!has_current_node());
@@ -636,23 +781,51 @@ typename WGraph<T>::Ref create_wgraph(std::istream &in) noexcept(false)
     //          input format.
     //Remember: key_t type is used to give the edge's ends.
 
+    std::string token;
+
     //TODO
     //First: Determine if it is directed or undirected.
+
+    in.get();
+    getline(in, token);
+
+    std::string dir = token;
 
     //
 
     //TODO
     //Second: get the number of nodes and create a wgraph with this capacity.
 
+    getline(in, token);
+
+    size_t capacity = std::stoi(token);
+
+    graph = WGraph<T>::create(capacity);
+
     //
 
     //TODO
     //Third: load the N T data items and adding the nodes.
 
+    T new_t;
+
+    for(size_t i = 0; i < capacity; i++){
+        getline(in, token);
+
+        std::istringstream convert(token);
+        convert >> new_t;
+
+        graph->add_node(new_t);
+    }
+
     //
 
     //TODO
     //Fourth: load the number of edges.
+
+    getline(in, token);
+
+    size_t nedges = std::stoi(token);
 
     //
 
@@ -663,6 +836,68 @@ typename WGraph<T>::Ref create_wgraph(std::istream &in) noexcept(false)
     //          duplicating each input edge (u,v) making too the (v,u) edge with same weight
     //          with the same weight.
 
+    if(dir == "DIRECTED"){
+
+        for(size_t i = 0; i < nedges; i++){
+            T new_t;
+            typename WNode<T>::Ref u;
+            typename WNode<T>::Ref v;
+            size_t w;
+
+            in >> token;
+
+            std::istringstream convert1(token);
+            convert1 >> new_t;
+
+            u = graph->find_node(new_t.key());
+
+            in >> token;
+
+            std::istringstream convert2(token);
+            convert2 >> new_t;
+
+            v = graph->find_node(new_t.key());
+
+            in >> token;
+
+            w = std::stoi(token);
+
+            graph->set_weight(u,v,w);
+        }
+
+    }else if(dir == "UNDIRECTED"){
+
+        for(size_t i = 0; i < nedges; i++){
+            T new_t;
+            typename WNode<T>::Ref u;
+            typename WNode<T>::Ref v;
+            size_t w;
+
+            in >> token;
+
+            std::istringstream convert1(token);
+            convert1 >> new_t;
+
+            u = graph->find_node(new_t.key());
+
+            in >> token;
+
+            std::istringstream convert2(token);
+            convert2 >> new_t;
+
+            v = graph->find_node(new_t.key());
+
+            in >> token;
+
+            w = std::stoi(token);
+
+            graph->set_weight(u,v,w);
+            graph->set_weight(v,u,w);
+        }
+
+    }else{
+        throw std::runtime_error("Wrong graph");
+    }
 
     //
 

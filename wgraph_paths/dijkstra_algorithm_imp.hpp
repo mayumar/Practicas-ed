@@ -34,6 +34,12 @@ void dijkstra_algorithm(typename WGraph<T>::Ref g,
     //      @see: https://en.cppreference.com/w/cpp/utility/tuple
     // Hint: you can use the keyword "using" to create an alias "Tuple"
  
+    predecessors = std::vector<size_t>(0, g->size()-1);
+    distances = std::vector<float>(g->size(), std::numeric_limits<float>::infinity());
+
+
+
+
     //
 }
 
