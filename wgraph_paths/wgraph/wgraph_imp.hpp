@@ -786,8 +786,7 @@ typename WGraph<T>::Ref create_wgraph(std::istream &in) noexcept(false)
     //TODO
     //First: Determine if it is directed or undirected.
 
-    in.get();
-    getline(in, token);
+    in >> token;
 
     std::string dir = token;
 
@@ -796,7 +795,7 @@ typename WGraph<T>::Ref create_wgraph(std::istream &in) noexcept(false)
     //TODO
     //Second: get the number of nodes and create a wgraph with this capacity.
 
-    getline(in, token);
+    in >> token;
 
     size_t capacity = std::stoi(token);
 
@@ -809,6 +808,7 @@ typename WGraph<T>::Ref create_wgraph(std::istream &in) noexcept(false)
 
     T new_t;
 
+    in.get();
     for(size_t i = 0; i < capacity; i++){
         getline(in, token);
 
