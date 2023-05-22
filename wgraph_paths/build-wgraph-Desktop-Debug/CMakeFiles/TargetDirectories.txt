@@ -1,5 +1,0 @@
-/home/mayumar/Escritorio/practicased/wgraph_paths/build-wgraph-Desktop-Debug/CMakeFiles/wgraph.dir
-/home/mayumar/Escritorio/practicased/wgraph_paths/build-wgraph-Desktop-Debug/CMakeFiles/test_wgraph.dir
-/home/mayumar/Escritorio/practicased/wgraph_paths/build-wgraph-Desktop-Debug/CMakeFiles/test_create_graph.dir
-/home/mayumar/Escritorio/practicased/wgraph_paths/build-wgraph-Desktop-Debug/CMakeFiles/edit_cache.dir
-/home/mayumar/Escritorio/practicased/wgraph_paths/build-wgraph-Desktop-Debug/CMakeFiles/rebuild_cache.dir
